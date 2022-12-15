@@ -2,6 +2,7 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, DateTime, String, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
+from errors import NotFound
 
 
 Base = declarative_base()

@@ -2,6 +2,7 @@ import json
 from aiohttp import web
 from database import Session
 from models import OwnerModel, AdvertisementModel
+from validation import validate, PostAds, PatchAds
 
 
 async def get_owner(owner_id: int, session: Session):
@@ -106,22 +107,32 @@ class AdvertisementView(web.View):
 
 
     async def post(self):
-        advertisement_data = await self.request.json()
+        # advertisement_data = await self.request.json()
+        advertisement_data = validate(PostAds, await self.request.json())
         new_advertisement = AdvertisementModel(**advertisement_data)
         self.session.add(new_advertisement)
         await self.session.commit()
-        return web.json_response(advertisement_to_dict(new_advertisement))
+        # return web.json_response(advertisement_to_dict(new_advertisement))
+        return web.json_response({
+            'title': new_advertisement.title,
+            'description': new_advertisement.description,
+            'owner_id': new_advertisement.owner_id
+            })
 
 
     async def patch(self):
         advertisement_id = int(self.request.match_info['advertisement_id'])
-        advertisement_data = await self.request.json()
+        # advertisement_data = await self.request.json()
+        advertisement_data = validate(PatchAds, await self.request.json())
         advertisement = await get_advertisement(advertisement_id, self.session)
         for field, value in advertisement_data.items():
             setattr(advertisement, field, value)
         self.session.add(advertisement)
         await self.session.commit()
-        return web.json_response(advertisement_to_dict(advertisement))
+        # return web.json_response(advertisement_to_dict(advertisement))
+        return web.json_response({
+            'title': advertisement.title,
+            'description': advertisement.description,})
 
 
     async def delete(self):

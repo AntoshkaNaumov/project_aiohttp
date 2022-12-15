@@ -60,7 +60,7 @@ def test_create_advertisement(create_owner):
 
 def test_patch_advertisemen(create_advertisement):
     response = requests.patch(f'{API_URL}/ads/{create_advertisement["id"]}', auth=(create_advertisement["owner_email"],
-                                                                                   '12345'), json={"description": "Новая"})
+                                                                                   '12345'), json={"title": "Шкаф IKEA", "description": "Новая"})
     assert response.status_code == 200
     json_data = response.json()
     print(json_data)
